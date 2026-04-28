@@ -1,15 +1,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext.jsx';
 import TodoItem from './TodoItem';
 
-const EMPTY_MESSAGES = {
-  all:       { icon: '✓', title: 'All clear!',            sub: 'Add a todo above to get started.' },
-  active:    { icon: '🎉', title: 'Nothing left to do!',  sub: 'All your todos are completed.' },
-  completed: { icon: '📋', title: 'No completed todos',   sub: 'Complete a todo to see it here.' },
+const EMPTY = {
+  all:       { icon: '✓',  title: 'No tasks yet',         sub: 'Add a task above to get started.' },
+  active:    { icon: '🎉', title: 'Nothing left to do!',  sub: 'All your tasks are completed.' },
+  completed: { icon: '📋', title: 'No completed tasks',   sub: 'Complete a task to see it here.' },
 };
 
 export default function TodoList({ todos, filter = 'all', onToggle, onEdit, onDelete }) {
+  const { theme } = useTheme();
+
   if (todos.length === 0) {
-    const { icon, title, sub } = EMPTY_MESSAGES[filter];
+    const { icon, title, sub } = EMPTY[filter];
     return (
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -23,7 +26,7 @@ export default function TodoList({ todos, filter = 'all', onToggle, onEdit, onDe
         >
           {icon}
         </motion.div>
-        <p className="font-semibold text-gray-600">{title}</p>
+        <p className={`font-semibold ${theme.tab}`}>{title}</p>
         <p className="text-sm text-gray-400 mt-1">{sub}</p>
       </motion.div>
     );
@@ -33,12 +36,13 @@ export default function TodoList({ todos, filter = 'all', onToggle, onEdit, onDe
   const done = todos.filter((t) => t.done);
 
   return (
-    <div className="space-y-2">
+    <div>
       <AnimatePresence initial={false}>
-        {pending.map((todo) => (
+        {pending.map((todo, i) => (
           <TodoItem
             key={todo._id}
             todo={todo}
+            index={i}
             onToggle={() => onToggle(todo._id)}
             onEdit={() => onEdit(todo)}
             onDelete={() => onDelete(todo._id)}
@@ -48,14 +52,15 @@ export default function TodoList({ todos, filter = 'all', onToggle, onEdit, onDe
 
       {done.length > 0 && (
         <>
-          <p className="text-xs text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">
+          <p className="text-xs text-gray-400 uppercase tracking-wider pt-4 pb-2 px-1 font-medium">
             Completed ({done.length})
           </p>
           <AnimatePresence initial={false}>
-            {done.map((todo) => (
+            {done.map((todo, i) => (
               <TodoItem
                 key={todo._id}
                 todo={todo}
+                index={i}
                 onToggle={() => onToggle(todo._id)}
                 onEdit={() => onEdit(todo)}
                 onDelete={() => onDelete(todo._id)}

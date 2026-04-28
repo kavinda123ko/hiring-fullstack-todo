@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext.jsx';
 
 const TITLE_MAX = 200;
 const DESC_MAX = 1000;
@@ -16,6 +17,7 @@ export default function EditModal({ todo, onClose, onSave, isLoading }) {
   const [title, setTitle] = useState(todo.title);
   const [description, setDescription] = useState(todo.description || '');
   const [error, setError] = useState('');
+  const { theme } = useTheme();
 
   useEffect(() => {
     const onKeyDown = (e) => { if (e.key === 'Escape') onClose(); };
@@ -71,7 +73,7 @@ export default function EditModal({ todo, onClose, onSave, isLoading }) {
               value={title}
               onChange={(e) => { setTitle(e.target.value); setError(''); }}
               maxLength={TITLE_MAX}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className={`w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 ${theme.ring}`}
               placeholder="Todo title"
               disabled={isLoading}
             />
@@ -99,7 +101,7 @@ export default function EditModal({ todo, onClose, onSave, isLoading }) {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               maxLength={DESC_MAX}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+              className={`w-full border border-gray-200 rounded-lg px-3 py-2 text-gray-600 focus:outline-none focus:ring-2 ${theme.ring} resize-none`}
               placeholder="Optional description"
               disabled={isLoading}
             />
@@ -115,7 +117,7 @@ export default function EditModal({ todo, onClose, onSave, isLoading }) {
             <button
               type="submit"
               disabled={isLoading || !title.trim()}
-              className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className={`px-4 py-2 text-sm text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-colors ${theme.btn}`}
             >
               {isLoading ? 'Saving…' : 'Save Changes'}
             </button>
